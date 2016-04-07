@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">VipTattoo</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Настройки</string>
+    <string name="label_main">Главная</string>
+    <string name="label_news">Новости</string>
+    <string name="label_feedback">Обратная связь</string>
+    <string name="label_enroll_master">Записаться к мастеру</string>
+    <string name="label_gallery">Наша галлерея</string>
+    <string name="vk_address">Адрес в контакте</string>
+    <string name="label_menu_gallery">Галлереи</string>
+
+    <string name="num_phone">+79507995017</string>
+    <string name="call_phone">Позвонить по номеру</string>
+
+    <string name="send_e_mail">Отправить письмо</string>
+    <string name="e_mail">akisterev@list.ru</string>
+    <string name="label_send_text">Текст сообщения</string>
+    <string name="label_user_e_mail">Почта для ответа</string>
+    <string name="title_activity_send_mail">Отправить письмо</string>
+    <string name="title_activity_but_send_mail">Отправить</string>
+    <string name="mail_send_end">Сообщение отправлено...</string>
+
+
+</resources>

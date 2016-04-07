@@ -1,0 +1,57 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ru.akisterev.theviptatu.MainFragments.FragmentMainFeedback">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/label_feedback"
+        android:textSize="20sp"
+        android:id="@+id/tvFeedback"
+        android:gravity="center" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnCall"
+        android:background="@mipmap/ic_launcher_call"
+        android:width="60dp"
+        android:height="85dp"
+        android:layout_below="@+id/tvFeedback"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ИЛИ"
+        android:id="@+id/tvILI"
+        android:layout_below="@+id/btnCall"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/label_feedback"
+        android:id="@+id/tvSendFeedback"
+        android:textSize="20sp"
+        android:layout_below="@+id/tvILI"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnSendMail"
+        android:layout_below="@+id/tvSendFeedback"
+        android:layout_centerHorizontal="true"
+        android:width="60dp"
+        android:height="85dp"
+        android:background="@mipmap/ic_send_mail" />
+
+</RelativeLayout>
