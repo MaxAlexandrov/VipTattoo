@@ -11,16 +11,22 @@
         android:layout_height="match_parent">
 
         <Spinner
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/spinnerCategory" />
 
-        <ListView
-            android:layout_width="wrap_content"
+        <Spinner
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/listVService"
-            android:layout_alignParentBottom="false"
+            android:id="@+id/spinnerServices"
             android:layout_below="@+id/spinnerCategory" />
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/listViewPersonal"
+            android:layout_below="@+id/spinnerServices" />
+
     </RelativeLayout>
 
 </FrameLayout>

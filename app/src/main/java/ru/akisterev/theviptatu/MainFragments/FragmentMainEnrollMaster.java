@@ -63,14 +63,22 @@ public class FragmentMainEnrollMaster extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final int REQUEST_NULL= 0;
+    private static final int REQUEST_CATEGORY = 1;
+    private static final int REQUEST_SERVICE = 2;
+    private static final int REQUEST_MASTER = 3;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
     private View main;
-    private HashMap<String, JSONObject> listMap;
+    private HashMap<String, JSONObject> listMapCategory;
+    private HashMap<String, JSONObject> listMapServices;
     private Intent loadingIntent;
     private ProgressDialog dialog;
+    private int lastRequest;
+    private int selectID;
+
 
     private OnFragmentInteractionListener mListener;
 
@@ -103,20 +111,14 @@ public class FragmentMainEnrollMaster extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        lastRequest = REQUEST_NULL;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         main = inflater.inflate(R.layout.fragment_main_enroll_master, container, false);
-
-        dialog = new ProgressDialog(getActivity());
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setMessage("Загружаю список услуг. Подождите...");
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
-
-        new FetchItemTask().execute();
+        getDialog("Загружаю список категорий. Подождите...");
 
         return main;
     }
@@ -150,6 +152,15 @@ public class FragmentMainEnrollMaster extends Fragment {
         mListener = null;
     }
 
+    private void getDialog(String text){
+        dialog = new ProgressDialog(getActivity());
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage(text);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.show();
+
+        new FetchItemTask().execute();
+    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -170,6 +181,9 @@ public class FragmentMainEnrollMaster extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
             System.out.println("поток запущен");
+            YclientConnect yCli;
+            HashMap getParam;
+            JSONObject result;
 
             //формируем json
             JSONObject paramObj = new JSONObject();
@@ -221,10 +235,6 @@ public class FragmentMainEnrollMaster extends Fragment {
                 e.printStackTrace();
             }*/
 
-            YclientConnect yCli = new YclientConnect("http://api.yclients.com/api/v1/service_categories");
-            yCli.setNumCompany("31280")
-                .setAuthorization("Bearer fk2ganr9amep27tu2z7y");
-
             /*JSONObject result = yCli.post(paramObj);
             try {
                 JSONObject resBody = new JSONObject((String) result.get("body"));
@@ -235,15 +245,6 @@ public class FragmentMainEnrollMaster extends Fragment {
 
             //yCli.setRequest(YclientConnect.REQUEST_SERVICE);
 
-            HashMap getParam = new HashMap<String, String>();
-            getParam.put("staff_id","0");
-            getParam.put("datetime", "2016-09-29T13:00:00+04:00");
-            JSONObject result = yCli.get(getParam);
-            try {
-                resBody = new JSONArray((String) result.get("body"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
 
            /* yCli.setRequest(YclientConnect.REQUEST_STAFF);
             getParam = new HashMap<String, String>();
@@ -266,6 +267,65 @@ public class FragmentMainEnrollMaster extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }*/
+            switch (lastRequest){
+                case REQUEST_NULL:
+                    yCli = new YclientConnect("http://api.yclients.com/api/v1/service_categories");
+                    yCli.setNumCompany("31280")
+                            .setAuthorization("Bearer fk2ganr9amep27tu2z7y");
+
+                    getParam = new HashMap<String, String>();
+                    //getParam.put("staff_id","0");
+                    //getParam.put("datetime", "2016-09-29T13:00:00+04:00");
+                    result = yCli.get(getParam);
+
+                    try {
+                        resBody = new JSONArray((String) result.get("body"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case REQUEST_CATEGORY:
+                    yCli = new YclientConnect("http://api.yclients.com/api/v1/services");
+                    yCli.setNumCompany("31280/0")
+                        .setAuthorization("Bearer fk2ganr9amep27tu2z7y");
+
+                    getParam = new HashMap<String, String>();
+                    getParam.put("category_id",""+selectID);
+                    //getParam.put("datetime", "2016-09-29T13:00:00+04:00");
+                    result = yCli.get(getParam);
+
+                    try {
+                        resBody = new JSONArray((String) result.get("body"));
+                        //System.out.println(resBody);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case REQUEST_SERVICE:
+                    yCli = new YclientConnect("http://api.yclients.com/api/v1");
+                    yCli.setNumCompany("31280")
+                            .setRequest(YclientConnect.REQUEST_STAFF)
+                            .setAuthorization("Bearer fk2ganr9amep27tu2z7y");
+
+                    getParam = new HashMap<String, String>();
+                    getParam.put("service_ids","["+selectID+"]");
+                    //getParam.put("datetime", "2016-09-29T13:00:00+04:00");
+                    result = yCli.get(getParam);
+
+                    try {
+                        resBody = new JSONArray((String) result.get("body"));
+                        System.out.println(resBody);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case REQUEST_MASTER:
+
+                    break;
+                default:
+
+                    break;
+            }
 
             return null;
         }
@@ -274,40 +334,118 @@ public class FragmentMainEnrollMaster extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            JSONArray category = resBody;
+            JSONArray retArray = resBody;
 
-            /*try {
-                category = resBody;
-                System.out.println(category.toString());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }*/
+            switch (lastRequest){
+                case REQUEST_NULL:
+                    //ListView listView = (ListView) main.findViewById(R.id.listVService);
+                    Spinner spinnerCategory = (Spinner) main.findViewById(R.id.spinnerCategory);
+                    //String[] value = new String[]{"Android", "iPhone", "WindowsMobile", "5555"};
+                    ArrayList<String> list = new ArrayList<String>();
 
-            ListView listView = (ListView) main.findViewById(R.id.listVService);
-            Spinner spinnerCategory = (Spinner) main.findViewById(R.id.spinnerCategory);
-            //String[] value = new String[]{"Android", "iPhone", "WindowsMobile", "5555"};
-            ArrayList<String> list = new ArrayList<String>();
-            listMap = new HashMap<String, JSONObject>();
-            if (category != null){
-                int len = category.length();
-                for (int i=0; i<len; i++){
+                    listMapCategory = new HashMap<String, JSONObject>();
+                    if (retArray != null){
+                        int len = retArray.length();
+                        for (int i=0; i<len; i++){
+                            try {
+                                list.add(retArray.getJSONObject(i).getString("title"));
+                                listMapCategory.put(retArray.getJSONObject(i).getString("title"), retArray.getJSONObject(i));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    dialog.hide();
+
                     try {
-                        list.add(category.getJSONObject(i).getString("title"));
-                        listMap.put(category.getJSONObject(i).getString("title"), category.getJSONObject(i));
-                    } catch (JSONException e) {
+                        ArrayAdapter<String> files = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
+                        spinnerCategory.setAdapter(files);
+                        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                TextView textCategory = (TextView)view;
+                                System.out.println(textCategory.getText());
+                                //System.out.println(listMapCategory.get(textCategory.getText()));
+                                try {
+                                    selectID = listMapCategory.get(textCategory.getText()).getInt("id");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                lastRequest = REQUEST_CATEGORY;
+                                getDialog("Загружаю список услуг. Подождите...");
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
+
+                    }catch (Exception e){
                         e.printStackTrace();
                     }
-                }
-            }
-            dialog.hide();
-            try {
-                ArrayAdapter<String> files = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, list);
-                //listView.setAdapter(files);
-                spinnerCategory.setAdapter(files);
 
-            }catch (Exception e){
-                e.printStackTrace();
+                    break;
+                case REQUEST_CATEGORY:
+                    Spinner spinnerService = (Spinner) main.findViewById(R.id.spinnerServices);
+                    //String[] value = new String[]{"Android", "iPhone", "WindowsMobile", "5555"};
+                    ArrayList<String> listServ = new ArrayList<String>();
+
+                    listMapServices = new HashMap<String, JSONObject>();
+                    if (retArray != null){
+                        int len = retArray.length();
+                        for (int i=0; i<len; i++){
+                            try {
+                                listServ.add(retArray.getJSONObject(i).getString("title"));
+                                listMapServices.put(retArray.getJSONObject(i).getString("title"), retArray.getJSONObject(i));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    dialog.hide();
+
+                    try {
+                        ArrayAdapter<String> files = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listServ);
+                        spinnerService.setAdapter(files);
+                        spinnerService.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                TextView textService = (TextView)view;
+                                try {
+                                    selectID = listMapServices.get(textService.getText()).getInt("id");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                                lastRequest = REQUEST_SERVICE;
+                                getDialog("Загружаю список персонал. Подождите...");
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> parent) {
+
+                            }
+                        });
+
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    break;
+                case REQUEST_SERVICE:
+
+                    dialog.hide();
+                    break;
+                case REQUEST_MASTER:
+
+                    break;
+                default:
+
+                    break;
             }
+
+
         }
     }
 }

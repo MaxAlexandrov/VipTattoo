@@ -68,9 +68,10 @@ public class YclientConnect {
             }else{
                 getUrlParamStr += "&";
             }
-            getUrlParamStr += par.getKey()+"="+par.getValue();
+
             try {
-                getUrlParamStr = URLEncoder.encode(getUrlParamStr, "UTF-8");
+                getUrlParamStr += URLEncoder.encode(par.getKey(), "UTF-8")+"="+URLEncoder.encode(par.getValue(), "UTF-8");
+                //getUrlParamStr = URLEncoder.encode(getUrlParamStr, "UTF-8");
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
@@ -158,8 +159,8 @@ public class YclientConnect {
             numCompany = "/"+numCompany;
         }
         urlStr = defUrlStr+request+numCompany;
-
         try {
+            System.out.println(urlStr+getUrlParamStr);
             url = new URL(urlStr+getUrlParamStr);
         } catch (MalformedURLException e) {
             e.printStackTrace();
