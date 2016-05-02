@@ -23,6 +23,7 @@
     <string name="title_activity_send_mail">Отправить письмо</string>
     <string name="title_activity_but_send_mail">Отправить</string>
     <string name="mail_send_end">Сообщение отправлено...</string>
+    <string name="link_vk_wall">https://api.vk.com/method/wall.get?owner_id=-1252064</string>
 
 
 </resources>
