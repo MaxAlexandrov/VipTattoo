@@ -49,7 +49,7 @@ public class FragmentMainNews extends ListFragment {
     private ListAdapter adapter;
     private ListView listView;
     private ArrayList<Post> list;
-    private ArrayList<String> textList;
+    private ArrayList<String> textList,titleList;
     private ProgressDialog progress;
 
     // TODO: Rename and change types of parameters
@@ -63,6 +63,7 @@ public class FragmentMainNews extends ListFragment {
         // Required empty public constructor
         list = new ArrayList<Post>();
         textList = new ArrayList<String>();
+        titleList = new ArrayList<String>();
     }
 
     /**
@@ -112,7 +113,9 @@ public class FragmentMainNews extends ListFragment {
         super.onActivityCreated(savedInstanceState);
         new ParseTask().execute();
         for (int i = 0; i <list.size() ; i++) {
+            String[] title  = list.get(i).getText().split("<br>");
             textList.add(list.get(i).getText());
+            titleList.add(title[0]);
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 R.layout.post_list_item,R.id.texView, textList);

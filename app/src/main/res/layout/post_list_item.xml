@@ -35,6 +35,7 @@
               android:background="@color/colorPrimary"
               android:padding="2dp"
               android:textColor="#fff"
+              android:lines="2"
               android:textSize="12sp"
               android:textStyle="normal"/>
            
